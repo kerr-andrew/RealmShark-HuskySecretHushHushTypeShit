@@ -649,9 +649,9 @@ public class MyInfoGUI extends JPanel {
     public void displayImg(JLabel label, int eq) {
         try {
             label.setIcon(ImageBuffer.getOutlinedIcon(eq, 40));
-            //            label.setText(IdToAsset.objectName(eq));
-            //                icon[i].setToolTipText(String.format("<html>%s<br>%s</html>", IdToAsset.objectName(eq), enchant));
-            label.setToolTipText(IdToAsset.objectName(eq));
+            //            label.setText(Items.name(eq));
+            //                icon[i].setToolTipText(String.format("<html>%s<br>%s</html>", Items.name(eq), enchant));
+            label.setToolTipText(Items.name(eq));
         } catch (Exception e) {
             e.printStackTrace();
         }

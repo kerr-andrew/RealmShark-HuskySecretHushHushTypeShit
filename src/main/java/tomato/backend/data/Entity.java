@@ -1,6 +1,5 @@
 package tomato.backend.data;
 
-import assets.IdToAsset;
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -18,6 +17,9 @@ import tomato.gui.security.ParsePanelGUI;
 import tomato.gui.stats.FameTableBridge;
 import tomato.realmshark.RealmCharacter;
 import tomato.realmshark.enums.CharacterClass;
+import tomato.realmshark.items.Item;
+import tomato.realmshark.items.Items;
+import tomato.realmshark.items.SlotType;
 
 public class Entity implements Serializable {
 
@@ -85,7 +87,7 @@ public class Entity implements Serializable {
         this.objectType = type;
         try {
             if (type != -1) {
-                name = IdToAsset.objectName(type);
+                name = Items.name(type);
             }
         } catch (Exception e) {}
     }
@@ -432,8 +434,8 @@ public void genericDamageHit(
                 );
                 if (abilitySlot != null) {
                     int abilityId = abilitySlot.statValue;
-                    int slotType = IdToAsset.getIdProjectileSlotType(abilityId);
-                    if (slotType == 18) {
+                    SlotType slotType = Items.get(abilityId).slotType;
+                    if (slotType == SlotType.POISON) {
                         slotType18AbilityUsers.put(player.id, time);
                         if (player.isUser()) {
                             System.out.println(
@@ -757,13 +759,7 @@ public void genericDamageHit(
     }
 
     public boolean isBossMob() {
-        String label = IdToAsset.getIdLabel(objectType);
-        if (label != null) {
-            String[] split = label.split(",");
-            for (String s : split) {
-                if (s.equals("BOSS") || s.equals("MINIBOSS")) return true;
-            }
-        }
-        return false;
+        Item item = Items.get(objectType);
+        return item.labels.contains("BOSS") || item.labels.contains("MINIBOSS");
     }
 }

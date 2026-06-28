@@ -95,16 +95,23 @@ public class Items {
     }
 
     private static Projectile parseProjectile(StringXML info) {
-        Projectile projectile = new Projectile();
+        Projectile.Builder projectile = new Projectile.Builder();
         for (StringXML projInfo : info.children) {
             if (projInfo.name == null) continue;
             switch(projInfo.name) {
-                case "id": projectile.id = Integer.parseInt(projInfo.value); break;
-                case "MinDamage": projectile.min = Integer.parseInt(projInfo.children.get(0).value.replaceAll("\t", "")); break;
-                case "MaxDamage": projectile.max = Integer.parseInt(projInfo.children.get(0).value);
+                case "id": projectile.setId(Integer.parseInt(projInfo.value)); break;
+                case "MinDamage": projectile.setMin(Integer.parseInt(projInfo.children.get(0).value.replaceAll("\t", ""))); break;
+                case "MaxDamage": projectile.setMax(Integer.parseInt(projInfo.children.get(0).value)); break;
+                case "ArmorPiercing": projectile.setPiercing(true); break;
+                case "Damage": {
+                    int damage = Integer.parseInt(projInfo.children.get(0).value);
+                    projectile.setMin(damage);
+                    projectile.setMax(damage);
+                    break;
+                }
             }
         }
-        return projectile;
+        return projectile.build();
     }
 
     public static List<Item> getParseItems() {
@@ -120,5 +127,9 @@ public class Items {
 
     public static boolean has(int id) {
         return EQUIPMENT.containsKey(id);
+    }
+
+    public static String name(int id) {
+        return EQUIPMENT.get(id).name();
     }
 }

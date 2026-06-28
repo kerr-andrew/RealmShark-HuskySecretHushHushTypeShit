@@ -55,7 +55,7 @@ public class Item {
     }
 
     public String name() {
-        if (displayName != null) {
+        if (displayName != null && !displayName.isEmpty()) {
             return displayName;
         } else {
             return name;

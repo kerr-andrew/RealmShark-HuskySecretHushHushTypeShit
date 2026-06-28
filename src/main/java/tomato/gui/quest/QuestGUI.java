@@ -63,7 +63,7 @@ public class QuestGUI extends JPanel {
     private void addItems(int[] items, JPanel panel) throws IOException {
         for (int id : items) {
             JLabel item = new JLabel(ImageBuffer.getOutlinedIcon(id, 20));
-            item.setToolTipText(IdToAsset.objectName(id));
+            item.setToolTipText(Items.name(id));
             panel.add(item);
         }
     }

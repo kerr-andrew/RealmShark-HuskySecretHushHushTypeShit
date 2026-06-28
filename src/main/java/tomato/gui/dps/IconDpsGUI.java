@@ -1,6 +1,5 @@
 package tomato.gui.dps;
 
-import assets.IdToAsset;
 import assets.ImageBuffer;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -29,6 +28,7 @@ import tomato.gui.dps.shared.EquipmentUsageAggregator;
 import tomato.gui.dps.shared.GuardsHandler;
 import tomato.realmshark.ParseEnchants;
 import tomato.realmshark.enums.CharacterClass;
+import tomato.realmshark.items.Items;
 
 public class IconDpsGUI extends DisplayDpsGUI {
 
@@ -486,7 +486,7 @@ public class IconDpsGUI extends DisplayDpsGUI {
             icon.setToolTipText(
                 String.format(
                     "<html>%s<br>%s</html>",
-                    IdToAsset.objectName(eq),
+                    Items.name(eq),
                     parsedEnchant
                 )
             );

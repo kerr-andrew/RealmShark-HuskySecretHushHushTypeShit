@@ -62,4 +62,18 @@ public enum SlotType {
     public String getName() {
         return this.name;
     }
+
+    public boolean isWeapon() {
+        switch (this) {
+            case SWORD:
+            case DAGGER:
+            case BOW:
+            case WAND:
+            case STAFF:
+            case KATANA:
+                return true;
+            default:
+                return false;
+        }
+    }
 }

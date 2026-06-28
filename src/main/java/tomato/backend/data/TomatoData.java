@@ -25,6 +25,8 @@ import tomato.realmshark.RealmCharacterStats;
 import tomato.realmshark.Sound;
 import tomato.realmshark.enums.CharacterClass;
 import tomato.realmshark.enums.LootBags;
+import tomato.realmshark.items.Item;
+import tomato.realmshark.items.Items;
 import util.PropertiesManager;
 import util.RNG;
 
@@ -767,11 +769,10 @@ public class TomatoData {
         Entity e = entityList.get(p.ownerId);
         boolean ap = false;
         if (e != null) {
-            int etype = e.objectType;
-            int btype = p.bulletType;
-            try {
-                ap = IdToAsset.getIdProjectileArmorPierces(etype, btype);
-            } catch (Exception ignored) {}
+            Item item = Items.get(e.objectType);
+            if (item != null && item.projectiles.containsKey(p.bulletType)) {
+                ap = item.projectiles.get(p.bulletType).piercing;
+            }
         }
         for (int i = 0; i < p.numShots; i++) {
             long id = p.ownerId + ((long) (p.bulletId + i) << 24);

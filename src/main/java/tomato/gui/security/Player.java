@@ -102,7 +102,7 @@ public class Player {
 
         sb.append("\t\t").append("\"equipment\":{\n");
         for (int i = 0; i < 4; i++) {
-            sb.append("\t\t\t").append("\"").append(equipmentNames[i]).append("\":\"").append(IdToAsset.objectName(inv[i])).append("\",\n");
+            sb.append("\t\t\t").append("\"").append(equipmentNames[i]).append("\":\"").append(Items.name(inv[i])).append("\",\n");
             sb.append("\t\t\t").append("\"").append(equipmentNames[i]).append("id\":").append(inv[i]).append(i != 3 ? "," : "").append("\n");
         }
         sb.append("\t\t").append("},\n");

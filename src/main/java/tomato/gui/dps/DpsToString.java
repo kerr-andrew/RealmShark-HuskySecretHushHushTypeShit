@@ -221,7 +221,7 @@ public class DpsToString {
             if (i != 0) s.append(" / ");
             Equipment max = eqAgg.getMostUsedItem(ownerId, i);
             int id = (max != null) ? max.id : 0;
-            s.append(IdToAsset.objectName(id));
+            s.append(Items.name(id));
         }
         s.append("]");
         return s.toString();
@@ -258,7 +258,7 @@ public class DpsToString {
                     // Single item => 100%
                     s.append(" 100% ");
                 }
-                s.append(IdToAsset.objectName(e2.id));
+                s.append(Items.name(e2.id));
                 first = false;
             }
         }

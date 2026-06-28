@@ -211,7 +211,7 @@ public class CharacterPetsGUI extends JPanel {
 
         public String name() {
             if (stat.get(StatType.PET_NAME_STAT) == null) return "---";
-            return IdToAsset.objectName(skin());
+            return Items.name(skin());
         }
 
         public int skin() {

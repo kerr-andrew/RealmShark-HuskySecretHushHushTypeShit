@@ -6,7 +6,7 @@ import packets.data.WorldPosData;
 import packets.incoming.CreateSuccessPacket;
 import packets.incoming.NewTickPacket;
 import packets.incoming.UpdatePacket;
-import assets.IdToAsset;
+import tomato.realmshark.items.Items;
 import util.Pair;
 
 import java.util.ArrayList;
@@ -149,7 +149,7 @@ public class Parse {
 
         @Override
         public String toString() {
-            return IdToAsset.objectName(objectType);
+            return Items.name(objectType);
         }
     }
 }

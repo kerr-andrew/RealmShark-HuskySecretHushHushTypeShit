@@ -1,6 +1,5 @@
 package tomato.backend;
 
-import assets.IdToAsset;
 import packets.data.StatData;
 import packets.data.enums.StatType;
 import packets.incoming.StasisPacket;
@@ -8,6 +7,7 @@ import tomato.backend.data.Entity;
 import tomato.backend.data.TomatoData;
 import tomato.gui.security.SecurityGUI;
 import tomato.realmshark.enums.CharacterClass;
+import tomato.realmshark.items.Items;
 import util.Util;
 
 public class SecurityAbilityUseCheck {
@@ -64,7 +64,7 @@ public class SecurityAbilityUseCheck {
                         sb.append("[").append(Util.getHourTime()).append("] ");
                         sb.append(entity.name()).append(": ");
                         sb.append(
-                            IdToAsset.objectName(
+                            Items.name(
                                 entity.stat.get(
                                     StatType.INVENTORY_1_STAT
                                 ).statValue
@@ -100,7 +100,7 @@ public class SecurityAbilityUseCheck {
                         sb.append("[").append(Util.getHourTime()).append("] ");
                         sb.append(entity.name()).append(": ");
                         sb.append(
-                            IdToAsset.objectName(
+                            Items.name(
                                 entity.stat.get(
                                     StatType.INVENTORY_1_STAT
                                 ).statValue

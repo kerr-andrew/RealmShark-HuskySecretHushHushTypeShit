@@ -1,11 +1,11 @@
 package tomato.backend.data;
 
-import assets.IdToAsset;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import packets.data.StatData;
 import packets.data.enums.StatType;
 import tomato.gui.stats.DungeonStats;
+import tomato.realmshark.items.Items;
 
 import java.io.File;
 import java.io.FileReader;
@@ -150,7 +150,7 @@ public class DungeonStatData {
             sb.append(name).append(" [").append(enteredDungeon).append("] ").append(totalTime).append("\n");
             for (Map.Entry<Integer, Integer> e : entityDamaged.entrySet()) {
                 Integer k = e.getKey();
-                sb.append("  ").append(IdToAsset.objectName(k)).append(":").append(e.getValue()).append("\n");
+                sb.append("  ").append(Items.name(k)).append(":").append(e.getValue()).append("\n");
                 Loot loot = entityLoot.get(k);
                 if (loot != null) sb.append(loot);
             }
@@ -180,7 +180,7 @@ public class DungeonStatData {
         public String toString() {
             StringBuilder sb = new StringBuilder();
             for (Map.Entry<Integer, Integer> e : lootList.entrySet()) {
-                sb.append("    ").append(IdToAsset.objectName(e.getKey())).append(":").append(e.getValue()).append("\n");
+                sb.append("    ").append(Items.name(e.getKey())).append(":").append(e.getValue()).append("\n");
             }
             return sb.toString();
         }

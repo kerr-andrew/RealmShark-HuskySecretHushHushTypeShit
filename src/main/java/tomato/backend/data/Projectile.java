@@ -1,8 +1,8 @@
 package tomato.backend.data;
 
-import assets.IdToAsset;
 import java.io.Serializable;
-import packets.data.enums.StatType;
+import tomato.realmshark.items.Item;
+import tomato.realmshark.items.Items;
 import util.RNG;
 
 public class Projectile implements Serializable {
@@ -32,9 +32,11 @@ public class Projectile implements Serializable {
         this.damage = damage;
         this.summonerId = summonerId;
         this.containerType = id; // Store containerType for proc projectile scaling
-        try {
-            armorPiercing = IdToAsset.getIdProjectileArmorPierces(id, type);
-        } catch (Exception e) {}
+
+        Item item = Items.get(id);
+        if (item != null && item.projectiles.containsKey(type)) {
+            armorPiercing = item.projectiles.get(type).piercing;
+        }
     }
 
     /**
@@ -51,44 +53,33 @@ public class Projectile implements Serializable {
         if (projectileId == -1) {
             projectileId = 0;
         }
-        int min = 0;
-        int max = 0;
-        boolean ap = false;
-        int slot = 0;
-        try {
-            min = IdToAsset.getIdProjectileMinDmg(weaponId, projectileId);
-            max = IdToAsset.getIdProjectileMaxDmg(weaponId, projectileId);
-            ap = IdToAsset.getIdProjectileArmorPierces(weaponId, projectileId);
-            slot = IdToAsset.getIdProjectileSlotType(weaponId);
-        } catch (ArrayIndexOutOfBoundsException e) {
-            // For main weapons with enchantment issues, skip entirely
-            slot = IdToAsset.getIdProjectileSlotType(weaponId);
-            boolean mainWeapon = isMainWeapon(slot);
-            if (mainWeapon) {
-                // Skip this projectile for main weapons with enchantment issues
-                return;
+
+        Item item = Items.get(weaponId);
+        tomato.realmshark.items.Projectile proj = item.projectiles.get(projectileId);
+        if (proj == null) {
+            if (!item.slotType.isWeapon()) {
+                // System.err.println(
+                //     "ArrayIndexOutOfBoundsException in IdToAsset for weaponId: " +
+                //         weaponId +
+                //         ", projectileId: " +
+                //         projectileId
+                // );
             }
-            // System.err.println(
-            //     "ArrayIndexOutOfBoundsException in IdToAsset for weaponId: " +
-            //         weaponId +
-            //         ", projectileId: " +
-            //         projectileId
-            // );
             return;
         }
-        boolean mainWeapon = isMainWeapon(slot);
+
         int dmg;
-        if (min != max) {
+        if (proj.min != proj.max) {
             long r = rng.next();
-            dmg = (int) (min + (r % (max - min)));
+            dmg = (int) (proj.min + (r % (proj.max - proj.min)));
         } else {
-            dmg = min;
+            dmg = proj.min;
         }
 
         // Add stat modifier bonus for abilities with scaling
         // Note: For multi-shot abilities, each individual projectile gets the full stat bonus
         // Only apply scaling to ability projectiles (not regular weapons)
-        boolean isAbilityProjectile = !mainWeapon; // Abilities are not main weapons
+        boolean isAbilityProjectile = !item.slotType.isWeapon(); // Abilities are not main weapons
         if (isAbilityProjectile) {
             AbilityScalingManager scalingManager =
                 AbilityScalingManager.getInstance();
@@ -127,22 +118,9 @@ public class Projectile implements Serializable {
         }
 
         float f = 1f;
-        if (mainWeapon) f = player.playerStatsMultiplier();
+        if (item.slotType.isWeapon()) f = player.playerStatsMultiplier();
         damage = (int) (dmg * f);
-        armorPiercing = ap;
-    }
-
-    private boolean isMainWeapon(int slot) {
-        switch (slot) {
-            case 1:
-            case 2:
-            case 3:
-            case 8:
-            case 17:
-            case 24:
-                return true;
-        }
-        return false;
+        armorPiercing = proj.piercing;
     }
 
     /**

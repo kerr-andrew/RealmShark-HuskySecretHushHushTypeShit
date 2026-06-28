@@ -458,7 +458,7 @@ public class ParsePanelGUI extends JPanel {
             }
 
             p.icon[i] = new JLabel(icon);
-            p.player.itemName[i] = IdToAsset.objectName(eq);
+            p.player.itemName[i] = Items.name(eq);
             panel.add(p.icon[i]);
         }
         p.updateToolTipText();
@@ -769,7 +769,7 @@ public class ParsePanelGUI extends JPanel {
                     int glowSize = getGlowSize(enchantCount);
                     icon[i].setIcon(ImageBuffer.getOutlinedIconWithGlow(eq, 20, glowColor, glowSize));
                 }
-                player.itemName[i] = IdToAsset.objectName(eq);
+                player.itemName[i] = Items.name(eq);
             } catch (Exception e) {
                 e.printStackTrace();
             }

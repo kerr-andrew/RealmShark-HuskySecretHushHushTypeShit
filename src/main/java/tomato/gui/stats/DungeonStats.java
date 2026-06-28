@@ -15,6 +15,7 @@ import tomato.backend.data.DungeonStatData.DungeonInfo;
 import tomato.backend.data.DungeonStatData.Loot;
 import tomato.gui.SmartScroller;
 import tomato.gui.dps.DpsGUI;
+import tomato.realmshark.items.Items;
 
 public class DungeonStats extends JPanel {
 
@@ -124,7 +125,7 @@ public class DungeonStats extends JPanel {
             Integer id = e.getKey();
             if (id == null || id == 0) continue;
 
-            String str = IdToAsset.objectName(id);
+            String str = Items.name(id);
             JPanel p = addMobTitle(id, e.getValue(), info);
             if (p == null) continue;
             list.put(str, p);
@@ -154,7 +155,7 @@ public class DungeonStats extends JPanel {
             if (loot == null) return null;
             sb.append("Unknown");
         } else {
-            String str = IdToAsset.objectName(id);
+            String str = Items.name(id);
             if (str == null) return null;
             sb.append(str).append(" : ").append(num);
         }
@@ -188,7 +189,7 @@ public class DungeonStats extends JPanel {
             StringBuilder sb2 = new StringBuilder();
             Integer idItem = e.getKey();
             sb2
-                .append(IdToAsset.objectName(idItem))
+                .append(Items.name(idItem))
                 .append(" : ")
                 .append(e.getValue())
                 .append("\n");

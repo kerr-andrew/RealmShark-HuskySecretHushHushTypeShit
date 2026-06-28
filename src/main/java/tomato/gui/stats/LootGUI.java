@@ -362,7 +362,7 @@ public class LootGUI extends JPanel {
             if (sd != null) {
                 picon = sd.statValue;
                 if (picon == 0) picon = player.objectType;
-                name = IdToAsset.objectName(picon);
+                name = Items.name(picon);
             }
             if (sesn != null) {
                 if (sesn.statValue == 1) {
@@ -409,7 +409,7 @@ public class LootGUI extends JPanel {
                 continue;
             }
             int statValue = sd.statValue;
-            String itemName = IdToAsset.objectName(statValue);
+            String itemName = Items.name(statValue);
             String enchantText = "";
             int enchantCount = 0;
 
@@ -490,7 +490,7 @@ public class LootGUI extends JPanel {
         int bag = entity.objectType;
         JLabel icon = new JLabel(ImageBuffer.getOutlinedIcon(bag, 20));
         String name = time();
-        name += "<br>" + IdToAsset.objectName(bag);
+        name += "<br>" + Items.name(bag);
         if (lootTime > 0) {
             name += "<br>Loot drop bonus 50%";
         }
@@ -509,7 +509,7 @@ public class LootGUI extends JPanel {
         JLabel icon = new JLabel(ImageBuffer.getOutlinedIcon(mob, 20));
         String name = "Unknown";
         if (mob != 100) {
-            name = IdToAsset.objectName(mob);
+            name = Items.name(mob);
         }
         if (sharedLoot != 0) {
             name += "<br>Shared loot: " + sharedLoot + " players";
