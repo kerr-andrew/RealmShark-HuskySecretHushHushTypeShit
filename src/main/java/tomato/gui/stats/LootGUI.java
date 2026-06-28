@@ -135,9 +135,9 @@ public class LootGUI extends JPanel {
         for (Component component : components) {
             if (component instanceof JPanel) {
                 JPanel lootEntry = (JPanel) component;
-                Entity bag = (Entity) lootEntry.getClientProperty("bagEntity");
+                Bag bag = (Bag) lootEntry.getClientProperty("bagEntity");
                 if (bag != null) {
-                    lootEntry.setVisible(INSTANCE.isBagVisible(bag.asBag()));
+                    lootEntry.setVisible(INSTANCE.isBagVisible(bag));
                 }
             }
         }
