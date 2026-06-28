@@ -2,8 +2,8 @@ package tomato.gui.security;
 
 import assets.ImageBuffer;
 import com.google.gson.Gson;
-import tomato.realmshark.items.Item;
-import tomato.realmshark.items.Items;
+import tomato.backend.data.items.Item;
+import tomato.backend.data.items.Items;
 import tomato.realmshark.enums.CharacterClass;
 import tomato.realmshark.enums.StatPotion;
 import util.PropertiesManager;
@@ -16,7 +16,6 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.*;
-import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;

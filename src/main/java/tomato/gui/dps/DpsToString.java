@@ -11,6 +11,7 @@ import tomato.backend.data.Damage;
 import tomato.backend.data.Entity;
 import tomato.backend.data.Equipment;
 import tomato.backend.data.PlayerRemoved;
+import tomato.backend.data.items.Items;
 import tomato.gui.dps.shared.DeathParser;
 import tomato.gui.dps.shared.DpsTextFormat;
 import tomato.gui.dps.shared.EquipmentUsageAggregator;

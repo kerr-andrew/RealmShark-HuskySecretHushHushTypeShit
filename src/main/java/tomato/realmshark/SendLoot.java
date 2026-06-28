@@ -12,6 +12,8 @@ import packets.data.enums.StatType;
 import packets.incoming.MapInfoPacket;
 import tomato.backend.data.Entity;
 import tomato.backend.data.TomatoData;
+import tomato.backend.data.entities.Bag;
+import tomato.backend.data.items.Item;
 import tomato.version.Version;
 
 public class SendLoot {
@@ -78,13 +80,13 @@ public class SendLoot {
     // Dungeons with special attribution logic where we DO NOT merge bags automatically
 
     private static final java.util.Set<String> SPECIAL_ATTRIBUTION_DUNGEONS =
-        new java.util.HashSet<>(
-            java.util.Arrays.asList(
-                "The Shatters",
-                "Oryx's Sanctuary",
-                "Moonlight Village"
-            )
-        );
+            new java.util.HashSet<>(
+                    java.util.Arrays.asList(
+                            "The Shatters",
+                            "Oryx's Sanctuary",
+                            "Moonlight Village"
+                    )
+            );
 
     // Pending full bag waiting for potential overflow partner
     private static PendingBag pendingFullBag;
@@ -133,17 +135,16 @@ public class SendLoot {
     }
 
     public static void sendLoot(
-        TomatoData data,
-        MapInfoPacket map,
-        Entity bag,
-        Entity dropper,
-        Entity player,
-        long time
+            TomatoData data,
+            MapInfoPacket map,
+            Bag bag,
+            Entity dropper,
+            Entity player,
+            long time
     ) {
         webSocket.con();
 
-        int bagId = -1;
-        WorldPosData pos = bag.pos;
+        WorldPosData pos = bag.pos();
         String dungeon = "";
         JsonArray mods = new JsonArray();
         int mob = -1;
@@ -154,48 +155,20 @@ public class SendLoot {
         boolean isSeasonal = false;
         int cruc = 0;
 
-        if (bag != null) {
-            bagId = bag.objectType;
+        for (int i = 0; i < 8; i++) {
+            Item.WithEnchants itemData = bag.at(i);
+            if (itemData == null) continue;
+            JsonObject item = new JsonObject();
 
-            String[] enchants = null;
-            StatData udata = bag.stat.get(StatType.UNIQUE_DATA_STRING);
-            if (udata != null && udata.stringStatValue != null) {
-                enchants = udata.stringStatValue.split(",");
+            item.addProperty("id", itemData.id);
+
+            int sl = Math.min(4, itemData.enchants.size());
+            if (data.isEnchantPing(String.join("\n", itemData.enchants))) {
+                Sound.custom.play();
             }
 
-            for (int i = 0; i < 8; i++) {
-                StatData sd = bag.stat.get(StatType.INVENTORY_0_STAT.get() + i);
-
-                if (sd == null || sd.statValue < 1) continue;
-
-                JsonObject item = new JsonObject();
-
-                item.addProperty("id", sd.statValue);
-
-                int sl = 0;
-
-                if (
-                    enchants != null &&
-                    i < enchants.length &&
-                    !enchants[i].isEmpty() &&
-                    !enchants[i].equals("AAIE_f_9__3__f8=")
-                ) {
-                    String enchantText = ParseEnchants.parse(enchants[i]);
-
-                    if (!enchantText.isEmpty()) {
-                        sl = Math.min(4, enchantText.split("\n").length);
-
-                        // Check for enchant pings
-                        if (data.isEnchantPing(enchantText)) {
-                            Sound.custom.play();
-                        }
-                    }
-                }
-
-                item.addProperty("sl", sl);
-
-                items.add(item);
-            }
+            item.addProperty("sl", sl);
+            items.add(item);
         }
 
         float lootEnch = 0f;
@@ -217,17 +190,17 @@ public class SendLoot {
 
             // Aggregate total loot bonus percent from player enchantments
             String[] playerEnchantCodes = ParseEnchants.getEnchantStrings(
-                player
+                    player
             );
             lootEnch = ParseEnchants.getTotalLootBonusPercent(
-                playerEnchantCodes
+                    playerEnchantCodes
             );
         }
 
         if (map != null) {
             dungeon = map.name;
             int[] dungeonMods = ParseDungeon.getModIds(
-                ParseDungeon.getModifiersString(map)
+                    ParseDungeon.getModifiersString(map)
             );
             for (int i = 0; i < dungeonMods.length; i++) {
                 mods.add(dungeonMods[i]);
@@ -247,8 +220,8 @@ public class SendLoot {
             sharedLoot = dropper.playersRemainAtKill();
 
             if (
-                dropper.lootMobIdOverride != null &&
-                !dropper.lootMobIdOverride.isEmpty()
+                    dropper.lootMobIdOverride != null &&
+                            !dropper.lootMobIdOverride.isEmpty()
             ) {
                 mobOverride = dropper.lootMobIdOverride;
             }
@@ -290,7 +263,7 @@ public class SendLoot {
                 // if a second bag (or this one) is/was full we can merge overflow.
                 pendingFullBag = new PendingBag();
 
-                pendingFullBag.bagId = bagId;
+                pendingFullBag.bagId = bag.bagType.id;
 
                 pendingFullBag.x = pos.x;
 
@@ -334,7 +307,7 @@ public class SendLoot {
                     // Start new pending with current (regardless of fullness)
                     pendingFullBag = new PendingBag();
 
-                    pendingFullBag.bagId = bagId;
+                    pendingFullBag.bagId = bag.bagType.id;
 
                     pendingFullBag.x = pos.x;
 
@@ -371,8 +344,8 @@ public class SendLoot {
 
                 // Merge / flush decision (same tick):
                 if (
-                    pendingFullBag != null &&
-                    pendingFullBag.tickSeed == currentTickSeed
+                        pendingFullBag != null &&
+                                pendingFullBag.tickSeed == currentTickSeed
                 ) {
                     boolean pendingWasFull = pendingFullBag.items.size() >= 8;
                     // Merge if either bag is full (overflow scenario)
@@ -387,19 +360,19 @@ public class SendLoot {
                         JsonObject merged = new JsonObject();
                         merged.addProperty("bag", pendingFullBag.bagId); // keep first bag id
                         merged.addProperty(
-                            "pos",
-                            String.format(
-                                "%f,%f",
-                                pendingFullBag.x,
-                                pendingFullBag.y
-                            )
+                                "pos",
+                                String.format(
+                                        "%f,%f",
+                                        pendingFullBag.x,
+                                        pendingFullBag.y
+                                )
                         );
                         merged.addProperty("dung", pendingFullBag.dungeon);
                         merged.add("mods", mods);
                         if (pendingFullBag.mobOverride != null) {
                             merged.addProperty(
-                                "mob",
-                                pendingFullBag.mobOverride
+                                    "mob",
+                                    pendingFullBag.mobOverride
                             );
                         } else {
                             merged.addProperty("mob", pendingFullBag.mob);
@@ -413,8 +386,8 @@ public class SendLoot {
                         merged.addProperty("lben", pendingFullBag.lootEnchant);
                         merged.addProperty("ver", Version.VERSION);
                         byte[] mout = merged
-                            .toString()
-                            .getBytes(StandardCharsets.UTF_8);
+                                .toString()
+                                .getBytes(StandardCharsets.UTF_8);
                         /*
                         System.out.println(
                             "[" +
@@ -431,12 +404,12 @@ public class SendLoot {
                         JsonObject flush = new JsonObject();
                         flush.addProperty("bag", pendingFullBag.bagId);
                         flush.addProperty(
-                            "pos",
-                            String.format(
-                                "%f,%f",
-                                pendingFullBag.x,
-                                pendingFullBag.y
-                            )
+                                "pos",
+                                String.format(
+                                        "%f,%f",
+                                        pendingFullBag.x,
+                                        pendingFullBag.y
+                                )
                         );
                         flush.addProperty("dung", pendingFullBag.dungeon);
                         if (pendingFullBag.mods != null) {
@@ -446,8 +419,8 @@ public class SendLoot {
                         }
                         if (pendingFullBag.mobOverride != null) {
                             flush.addProperty(
-                                "mob",
-                                pendingFullBag.mobOverride
+                                    "mob",
+                                    pendingFullBag.mobOverride
                             );
                         } else {
                             flush.addProperty("mob", pendingFullBag.mob);
@@ -461,8 +434,8 @@ public class SendLoot {
                         flush.addProperty("lben", pendingFullBag.lootEnchant);
                         flush.addProperty("ver", Version.VERSION);
                         byte[] pout = flush
-                            .toString()
-                            .getBytes(StandardCharsets.UTF_8);
+                                .toString()
+                                .getBytes(StandardCharsets.UTF_8);
                         /* System.out.println(
                                 "[" +
                                     new Date() +
@@ -473,7 +446,7 @@ public class SendLoot {
                         sem.release();
                         // Start new pending with current bag
                         pendingFullBag = new PendingBag();
-                        pendingFullBag.bagId = bagId;
+                        pendingFullBag.bagId = bag.bagType.id;
                         pendingFullBag.x = pos.x;
                         pendingFullBag.y = pos.y;
                         pendingFullBag.dungeon = dungeon;
@@ -497,7 +470,7 @@ public class SendLoot {
 
         // ------------------ Normal (non-merged) send path ------------------
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("bag", bagId);
+        jsonObject.addProperty("bag", bag.bagType.id);
         jsonObject.addProperty("pos", String.format("%f,%f", pos.x, pos.y));
         jsonObject.addProperty("dung", dungeon);
         jsonObject.add("mods", mods);
@@ -555,7 +528,7 @@ public class SendLoot {
                 }
             }
         })
-            .start();
+                .start();
     }
 
     public static void main(String[] args) {
@@ -570,7 +543,7 @@ public class SendLoot {
         WorldPosData pos = new WorldPosData();
         String dungeon = "Realm of the Mad God";
         int[] dungeonMods = ParseDungeon.getModIds(
-            "BONUSCONSUMABLES;ENERGIZEDMINIONS_1;|D"
+                "BONUSCONSUMABLES;ENERGIZEDMINIONS_1;|D"
         );
         int mob = 17735;
         int sharedLoot = 1;

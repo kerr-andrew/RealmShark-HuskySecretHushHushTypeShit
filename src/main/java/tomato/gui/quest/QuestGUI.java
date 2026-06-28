@@ -3,6 +3,7 @@ package tomato.gui.quest;
 import assets.IdToAsset;
 import assets.ImageBuffer;
 import packets.data.QuestData;
+import tomato.backend.data.items.Items;
 
 import javax.swing.*;
 import java.awt.*;

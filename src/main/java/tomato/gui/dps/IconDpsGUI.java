@@ -4,7 +4,6 @@ import assets.ImageBuffer;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.image.BufferedImage;
@@ -12,7 +11,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import packets.data.ObjectStatusData;
@@ -28,7 +26,7 @@ import tomato.gui.dps.shared.EquipmentUsageAggregator;
 import tomato.gui.dps.shared.GuardsHandler;
 import tomato.realmshark.ParseEnchants;
 import tomato.realmshark.enums.CharacterClass;
-import tomato.realmshark.items.Items;
+import tomato.backend.data.items.Items;
 
 public class IconDpsGUI extends DisplayDpsGUI {
 

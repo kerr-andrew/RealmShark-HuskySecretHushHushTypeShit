@@ -4,6 +4,7 @@ import assets.IdToAsset;
 import assets.ImageBuffer;
 import packets.data.enums.StatType;
 import tomato.backend.data.Entity;
+import tomato.backend.data.items.Items;
 import tomato.gui.SmartScroller;
 import tomato.realmshark.ParseEnchants;
 import util.PropertiesManager;

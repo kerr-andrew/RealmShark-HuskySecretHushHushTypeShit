@@ -1,8 +1,8 @@
 package tomato.backend.data;
 
 import java.io.Serializable;
-import tomato.realmshark.items.Item;
-import tomato.realmshark.items.Items;
+import tomato.backend.data.items.Item;
+import tomato.backend.data.items.Items;
 import util.RNG;
 
 public class Projectile implements Serializable {
@@ -55,7 +55,7 @@ public class Projectile implements Serializable {
         }
 
         Item item = Items.get(weaponId);
-        tomato.realmshark.items.Projectile proj = item.projectiles.get(projectileId);
+        tomato.backend.data.items.Projectile proj = item.projectiles.get(projectileId);
         if (proj == null) {
             if (!item.slotType.isWeapon()) {
                 // System.err.println(

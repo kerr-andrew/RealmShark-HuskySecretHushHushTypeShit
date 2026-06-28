@@ -10,6 +10,10 @@ import packets.data.enums.ConditionBits;
 import packets.data.enums.ConditionNewBits;
 import packets.data.enums.StatType;
 import tomato.backend.SecurityAbilityUseCheck;
+import tomato.backend.data.entities.Bag;
+import tomato.backend.data.items.Item;
+import tomato.backend.data.items.Items;
+import tomato.backend.data.items.SlotType;
 import tomato.gui.character.CharacterStatMaxingGUI;
 import tomato.gui.dps.DpsGUI;
 import tomato.gui.myinfo.MyInfoGUI;
@@ -17,15 +21,13 @@ import tomato.gui.security.ParsePanelGUI;
 import tomato.gui.stats.FameTableBridge;
 import tomato.realmshark.RealmCharacter;
 import tomato.realmshark.enums.CharacterClass;
-import tomato.realmshark.items.Item;
-import tomato.realmshark.items.Items;
-import tomato.realmshark.items.SlotType;
+import tomato.realmshark.enums.LootBags;
 
 public class Entity implements Serializable {
 
     // Track players with SlotType 18 abilities for DamagePacket invulnerability bypass
     private static final HashMap<Integer, Long> slotType18AbilityUsers =
-        new HashMap<>();
+            new HashMap<>();
     private static final long ABILITY_TRACKING_WINDOW_MS = 5000; // 5 second window
 
     private boolean isUser;
@@ -63,7 +65,7 @@ public class Entity implements Serializable {
 
     private static final int ORYX_THE_MAD_GOD_GUARD_ANIMATION = -935464302;
     private static final int ORYX_THE_MAD_GOD_GUARD_EXALTED_ANIMATION =
-        -918686683;
+            -918686683;
     private static final int CHANCELLOR_DAMMAH = 9635;
     private static final int FORGOTTEN_KING = 29039;
     private static final int FORGOTTEN_KING_REFLECTOR_ANIMATION = -123818367;
@@ -181,7 +183,7 @@ public class Entity implements Serializable {
         boolean damaging = (condition & ConditionBits.DAMAGING.value()) != 0;
         int attack = stat.get(StatType.ATTACK_STAT).statValue;
         float exaltDmgBonus =
-            (float) stat.get(StatType.EXALTATION_BONUS_DAMAGE).statValue / 1000;
+                (float) stat.get(StatType.EXALTATION_BONUS_DAMAGE).statValue / 1000;
 
         if (weak) {
             return 0.5f;
@@ -194,7 +196,7 @@ public class Entity implements Serializable {
         // Apply crucible damage bonus if active
         if (this == tomatoData.player) {
             double crucibleMultiplier =
-                CrucibleBonusManager.getPlayerDamageMultiplier();
+                    CrucibleBonusManager.getPlayerDamageMultiplier();
             number *= crucibleMultiplier;
         }
 
@@ -202,9 +204,9 @@ public class Entity implements Serializable {
     }
 
     public void userProjectileHit(
-        Entity attacker,
-        Projectile projectile,
-        long timePc
+            Entity attacker,
+            Projectile projectile,
+            long timePc
     ) {
         if (projectile == null || projectile.getDamage() == 0) return;
 
@@ -238,7 +240,7 @@ public class Entity implements Serializable {
         boolean hasContainerType = isLocalAttacker && containerType != -1;
         // Initialize scaling manager here so it's available to the entire hit/defense flow.
         AbilityScalingManager scalingManager =
-            AbilityScalingManager.getInstance();
+                AbilityScalingManager.getInstance();
 
         if (isAbilityProjectile && !hasContainerType) {
             // Ability projectile without containerType: apply defense calculations unless armor piercing
@@ -248,44 +250,44 @@ public class Entity implements Serializable {
                 dmg = baseDamage;
                 if (attacker != null && attacker.isUser()) {
                     System.out.println(
-                        "[Entity] userProjectileHit: using armor-piercing ability damage=" +
-                            dmg +
-                            " (ignores defense)"
+                            "[Entity] userProjectileHit: using armor-piercing ability damage=" +
+                                    dmg +
+                                    " (ignores defense)"
                     );
                 }
             } else {
                 // Non-armor piercing abilities should consider target defense
                 int[] conditions = new int[2];
                 conditions[0] =
-                    stat.get(StatType.CONDITION_STAT) == null
-                        ? 0
-                        : stat.get(StatType.CONDITION_STAT).statValue;
+                        stat.get(StatType.CONDITION_STAT) == null
+                                ? 0
+                                : stat.get(StatType.CONDITION_STAT).statValue;
                 conditions[1] =
-                    stat.get(StatType.NEW_CON_STAT) == null
-                        ? 0
-                        : stat.get(StatType.NEW_CON_STAT).statValue;
+                        stat.get(StatType.NEW_CON_STAT) == null
+                                ? 0
+                                : stat.get(StatType.NEW_CON_STAT).statValue;
                 int defence =
-                    stat.get(StatType.DEFENSE_STAT) == null
-                        ? 0
-                        : stat.get(StatType.DEFENSE_STAT).statValue;
+                        stat.get(StatType.DEFENSE_STAT) == null
+                                ? 0
+                                : stat.get(StatType.DEFENSE_STAT).statValue;
 
                 dmg = Projectile.damageWithDefense(
-                    baseDamage,
-                    false, // armorPiercing is false since we're applying defense
-                    defence,
-                    conditions,
-                    -1, // weaponId not available for ability projectiles without containerType
-                    attacker
+                        baseDamage,
+                        false, // armorPiercing is false since we're applying defense
+                        defence,
+                        conditions,
+                        -1, // weaponId not available for ability projectiles without containerType
+                        attacker
                 );
                 if (attacker != null && attacker.isUser()) {
                     System.out.println(
-                        "[Entity] userProjectileHit: applied defense to ability damage=" +
-                            dmg +
-                            " (base=" +
-                            baseDamage +
-                            ", defense=" +
-                            defence +
-                            ")"
+                            "[Entity] userProjectileHit: applied defense to ability damage=" +
+                                    dmg +
+                                    " (base=" +
+                                    baseDamage +
+                                    ", defense=" +
+                                    defence +
+                                    ")"
                     );
                 }
             }
@@ -298,10 +300,10 @@ public class Entity implements Serializable {
                 // This ensures we only debug lethal-strike / scaling client-side calculations for our own shots.
                 if (attacker != null && attacker.isUser() && hasScaling) {
                     System.out.println(
-                        "[Entity] userProjectileHit: containerType=" +
-                            containerType +
-                            " hasScaling=" +
-                            hasScaling
+                            "[Entity] userProjectileHit: containerType=" +
+                                    containerType +
+                                    " hasScaling=" +
+                                    hasScaling
                     );
                 }
                 if (hasScaling) {
@@ -310,15 +312,15 @@ public class Entity implements Serializable {
                     try {
                         // Prefer damage-time / current attacker stat for scaling if available.
                         AbilityScalingManager.AbilityScalingData sd =
-                            scalingManager.getScalingData(containerType);
+                                scalingManager.getScalingData(containerType);
                         if (
-                            attacker != null &&
-                            sd != null &&
-                            sd.scalingStat != null &&
-                            attacker.stat.get(sd.scalingStat) != null
+                                attacker != null &&
+                                        sd != null &&
+                                        sd.scalingStat != null &&
+                                        attacker.stat.get(sd.scalingStat) != null
                         ) {
                             statSnapshot = Integer.valueOf(
-                                attacker.stat.get(sd.scalingStat).statValue
+                                    attacker.stat.get(sd.scalingStat).statValue
                             );
                         } else if (projectile != null) {
                             int s = projectile.getOriginScalingStat();
@@ -329,26 +331,26 @@ public class Entity implements Serializable {
                     } catch (Exception ignored) {}
                     // Use snapshot-aware calculation (falls back to current player stats when snapshot is null)
                     int statBonus = scalingManager.calculateStatBonus(
-                        containerType,
-                        statSnapshot,
-                        attacker
+                            containerType,
+                            statSnapshot,
+                            attacker
                     );
                     int baseDamage = projectile.getDamage();
                     dmg = baseDamage + statBonus;
                     // Only log the detailed proc scaling message for the local user
                     if (attacker != null && attacker.isUser()) {
                         System.out.println(
-                            "[Entity] userProjectileHit: proc scaling applied containerType=" +
-                                containerType +
-                                " baseDamage=" +
-                                baseDamage +
-                                " statBonus=" +
-                                statBonus +
-                                " total=" +
-                                dmg +
-                                (statSnapshot != null
-                                    ? " (used snapshot)"
-                                    : " (used current)")
+                                "[Entity] userProjectileHit: proc scaling applied containerType=" +
+                                        containerType +
+                                        " baseDamage=" +
+                                        baseDamage +
+                                        " statBonus=" +
+                                        statBonus +
+                                        " total=" +
+                                        dmg +
+                                        (statSnapshot != null
+                                                ? " (used snapshot)"
+                                                : " (used current)")
                         );
                     }
                     isProcProjectile = true;
@@ -362,29 +364,29 @@ public class Entity implements Serializable {
                 int[] conditions = new int[2];
 
                 conditions[0] =
-                    stat.get(StatType.CONDITION_STAT) == null
-                        ? 0
-                        : stat.get(StatType.CONDITION_STAT).statValue;
+                        stat.get(StatType.CONDITION_STAT) == null
+                                ? 0
+                                : stat.get(StatType.CONDITION_STAT).statValue;
                 conditions[1] =
-                    stat.get(StatType.NEW_CON_STAT) == null
-                        ? 0
-                        : stat.get(StatType.NEW_CON_STAT).statValue;
+                        stat.get(StatType.NEW_CON_STAT) == null
+                                ? 0
+                                : stat.get(StatType.NEW_CON_STAT).statValue;
                 int defence =
-                    stat.get(StatType.DEFENSE_STAT) == null
-                        ? 0
-                        : stat.get(StatType.DEFENSE_STAT).statValue;
+                        stat.get(StatType.DEFENSE_STAT) == null
+                                ? 0
+                                : stat.get(StatType.DEFENSE_STAT).statValue;
 
                 // For proc projectiles with scaling, use the stat-scaled damage as base
                 int baseDamage = isProcProjectile
-                    ? dmg
-                    : projectile.getDamage();
+                        ? dmg
+                        : projectile.getDamage();
 
                 // Apply the standard defense calculation
                 dmg = Projectile.damageWithDefense(
-                    baseDamage,
-                    projectile.isArmorPiercing(),
-                    defence,
-                    conditions
+                        baseDamage,
+                        projectile.isArmorPiercing(),
+                        defence,
+                        conditions
                 );
             }
         }
@@ -395,29 +397,29 @@ public class Entity implements Serializable {
             addPlayerDmg(damage);
             // Only record the detailed recorded-damage log for local-user lethal-strike (scaling) hits.
             if (
-                attacker != null &&
-                attacker.isUser() &&
-                AbilityScalingManager.getInstance().hasScaling(
-                    projectile.getContainerType()
-                )
+                    attacker != null &&
+                            attacker.isUser() &&
+                            AbilityScalingManager.getInstance().hasScaling(
+                                    projectile.getContainerType()
+                            )
             ) {
                 System.out.println(
-                    "[Entity] userProjectileHit: recorded damage owner=" +
-                        attacker.id +
-                        " dmg=" +
-                        dmg +
-                        " target=" +
-                        this.id
+                        "[Entity] userProjectileHit: recorded damage owner=" +
+                                attacker.id +
+                                " dmg=" +
+                                dmg +
+                                " target=" +
+                                this.id
                 );
             }
         }
     }
 
-    
-public void genericDamageHit(
-        Entity attacker,
-        Projectile projectile,
-        long time
+
+    public void genericDamageHit(
+            Entity attacker,
+            Projectile projectile,
+            long time
     ) {
         if (projectile == null || projectile.getDamage() == 0) return;
         Damage damage = new Damage(attacker, projectile, time);
@@ -430,19 +432,19 @@ public void genericDamageHit(
         if (player != null && player.stat != null) {
             try {
                 StatData abilitySlot = player.stat.get(
-                    StatType.INVENTORY_1_STAT
+                        StatType.INVENTORY_1_STAT
                 );
                 if (abilitySlot != null) {
                     int abilityId = abilitySlot.statValue;
-                    SlotType slotType = Items.get(abilityId).slotType;
-                    if (slotType == SlotType.POISON) {
+                    Item ability = Items.get(abilityId);
+                    if (ability != null && ability.slotType == SlotType.POISON) {
                         slotType18AbilityUsers.put(player.id, time);
                         if (player.isUser()) {
                             System.out.println(
-                                "[Entity] trackSlotType18AbilityUse: tracking SlotType 18 ability - item=" +
-                                    abilityId +
-                                    " player=" +
-                                    player.id
+                                    "[Entity] trackSlotType18AbilityUse: tracking SlotType 18 ability - item=" +
+                                            abilityId +
+                                            " player=" +
+                                            player.id
                             );
                         }
                     }
@@ -459,7 +461,7 @@ public void genericDamageHit(
         if (damage.owner != null) {
             int id = damage.owner.id;
             Damage dmg = damagePlayer.computeIfAbsent(id, a ->
-                new Damage(damage.owner)
+                    new Damage(damage.owner)
             );
             dmg.add(damage);
         }
@@ -476,18 +478,18 @@ public void genericDamageHit(
         int def = stat.get(StatType.DEFENSE_STAT).statValue;
         int condition = stat.get(StatType.CONDITION_STAT).statValue;
         boolean invulnerable =
-            (condition & ConditionBits.INVULNERABLE.value()) != 0;
+                (condition & ConditionBits.INVULNERABLE.value()) != 0;
 
         if (invulnerable) {
             return 0;
         }
 
         boolean armorBroken =
-            (condition & ConditionBits.ARMORBROKEN.value()) != 0;
+                (condition & ConditionBits.ARMORBROKEN.value()) != 0;
         boolean armored = (condition & ConditionBits.ARMORED.value()) != 0;
         boolean exposed = (condition & ConditionNewBits.EXPOSED.value()) != 0;
         boolean petrified =
-            (condition & ConditionNewBits.PETRIFIED.value()) != 0;
+                (condition & ConditionNewBits.PETRIFIED.value()) != 0;
         boolean cursed = (condition & ConditionNewBits.CURSE.value()) != 0;
 
         if (ap || armorBroken) {
@@ -513,26 +515,26 @@ public void genericDamageHit(
 
     private void bossPhaseDamage(Damage damage) {
         damage.oryx3GuardDmg =
-            objectType == ORYX_THE_MAD_GOD &&
-            stat.get(StatType.ANIMATION_STAT) != null &&
-            (stat.get(StatType.ANIMATION_STAT).statValue ==
-                    ORYX_THE_MAD_GOD_GUARD_ANIMATION ||
-                stat.get(StatType.ANIMATION_STAT).statValue ==
-                ORYX_THE_MAD_GOD_GUARD_EXALTED_ANIMATION);
+                objectType == ORYX_THE_MAD_GOD &&
+                        stat.get(StatType.ANIMATION_STAT) != null &&
+                        (stat.get(StatType.ANIMATION_STAT).statValue ==
+                                ORYX_THE_MAD_GOD_GUARD_ANIMATION ||
+                                stat.get(StatType.ANIMATION_STAT).statValue ==
+                                        ORYX_THE_MAD_GOD_GUARD_EXALTED_ANIMATION);
         damage.walledGardenReflectors =
-            objectType == FORGOTTEN_KING &&
-            stat.get(StatType.ANIMATION_STAT) != null &&
-            stat.get(StatType.ANIMATION_STAT).statValue ==
-            FORGOTTEN_KING_REFLECTOR_ANIMATION &&
-            tomatoData.hasGuardedPhaseEntity();
+                objectType == FORGOTTEN_KING &&
+                        stat.get(StatType.ANIMATION_STAT) != null &&
+                        stat.get(StatType.ANIMATION_STAT).statValue ==
+                                FORGOTTEN_KING_REFLECTOR_ANIMATION &&
+                        tomatoData.hasGuardedPhaseEntity();
         damage.chancellorDammahDmg =
-            objectType == CHANCELLOR_DAMMAH && !dammahCountered;
+                objectType == CHANCELLOR_DAMMAH && !dammahCountered;
     }
 
     public String name() {
         if (
-            CharacterClass.isPlayerCharacter(objectType) &&
-            stat.get(StatType.NAME_STAT) != null
+                CharacterClass.isPlayerCharacter(objectType) &&
+                        stat.get(StatType.NAME_STAT) != null
         ) {
             return stat.get(StatType.NAME_STAT).stringStatValue.split(",")[0];
         }
@@ -565,8 +567,8 @@ public void genericDamageHit(
 
     public List<Damage> getPlayerDamageList() {
         return Arrays.stream(damagePlayer.values().toArray(new Damage[0]))
-            .sorted(Comparator.comparingInt(Damage::getDamage).reversed())
-            .collect(Collectors.toList());
+                .sorted(Comparator.comparingInt(Damage::getDamage).reversed())
+                .collect(Collectors.toList());
     }
 
     public int playersRemainAtKill() {
@@ -598,29 +600,29 @@ public void genericDamageHit(
         int[] base = new int[8];
 
         base[0] =
-            stat.get(StatType.MAX_HP_STAT).statValue -
-            stat.get(StatType.MAX_HP_BOOST_STAT).statValue;
+                stat.get(StatType.MAX_HP_STAT).statValue -
+                        stat.get(StatType.MAX_HP_BOOST_STAT).statValue;
         base[1] =
-            stat.get(StatType.MAX_MP_STAT).statValue -
-            stat.get(StatType.MAX_MP_BOOST_STAT).statValue;
+                stat.get(StatType.MAX_MP_STAT).statValue -
+                        stat.get(StatType.MAX_MP_BOOST_STAT).statValue;
         base[2] =
-            stat.get(StatType.ATTACK_STAT).statValue -
-            stat.get(StatType.ATTACK_BOOST_STAT).statValue;
+                stat.get(StatType.ATTACK_STAT).statValue -
+                        stat.get(StatType.ATTACK_BOOST_STAT).statValue;
         base[3] =
-            stat.get(StatType.DEFENSE_STAT).statValue -
-            stat.get(StatType.DEFENSE_BOOST_STAT).statValue;
+                stat.get(StatType.DEFENSE_STAT).statValue -
+                        stat.get(StatType.DEFENSE_BOOST_STAT).statValue;
         base[4] =
-            stat.get(StatType.SPEED_STAT).statValue -
-            stat.get(StatType.SPEED_BOOST_STAT).statValue;
+                stat.get(StatType.SPEED_STAT).statValue -
+                        stat.get(StatType.SPEED_BOOST_STAT).statValue;
         base[5] =
-            stat.get(StatType.DEXTERITY_STAT).statValue -
-            stat.get(StatType.DEXTERITY_BOOST_STAT).statValue;
+                stat.get(StatType.DEXTERITY_STAT).statValue -
+                        stat.get(StatType.DEXTERITY_BOOST_STAT).statValue;
         base[6] =
-            stat.get(StatType.VITALITY_STAT).statValue -
-            stat.get(StatType.VITALITY_BOOST_STAT).statValue;
+                stat.get(StatType.VITALITY_STAT).statValue -
+                        stat.get(StatType.VITALITY_BOOST_STAT).statValue;
         base[7] =
-            stat.get(StatType.WISDOM_STAT).statValue -
-            stat.get(StatType.WISDOM_BOOST_STAT).statValue;
+                stat.get(StatType.WISDOM_STAT).statValue -
+                        stat.get(StatType.WISDOM_BOOST_STAT).statValue;
 
         return base;
     }
@@ -640,7 +642,7 @@ public void genericDamageHit(
                 r.fame = fame;
                 // Pass character class name to fame table
                 String className =
-                    r.classString != null ? r.classString : "Char " + charId;
+                        r.classString != null ? r.classString : "Char " + charId;
                 FameTableBridge.updateFame(charId, fame, time, className);
             } else {
                 // Try to get class name from ObjectType if character not in charMap
@@ -708,9 +710,9 @@ public void genericDamageHit(
     private String getClassNameFromObjectType(int charId) {
         // Try to get class name from current player's ObjectType if available
         if (
-            tomatoData != null &&
-            tomatoData.player != null &&
-            CharacterClass.isPlayerCharacter(tomatoData.player.objectType)
+                tomatoData != null &&
+                        tomatoData.player != null &&
+                        CharacterClass.isPlayerCharacter(tomatoData.player.objectType)
         ) {
             return CharacterClass.getName(tomatoData.player.objectType);
         }
@@ -760,6 +762,14 @@ public void genericDamageHit(
 
     public boolean isBossMob() {
         Item item = Items.get(objectType);
-        return item.labels.contains("BOSS") || item.labels.contains("MINIBOSS");
+        return item != null && (
+                item.labels.contains("BOSS") ||
+                item.labels.contains("MINIBOSS")
+        );
+    }
+
+    public Bag asBag() {
+        if (LootBags.lootBag(objectType) == null) return null;
+        return new Bag(this);
     }
 }

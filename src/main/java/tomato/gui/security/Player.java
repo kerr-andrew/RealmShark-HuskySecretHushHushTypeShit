@@ -3,6 +3,7 @@ package tomato.gui.security;
 import assets.IdToAsset;
 import packets.data.enums.StatType;
 import tomato.backend.data.Entity;
+import tomato.backend.data.items.Items;
 import tomato.realmshark.enums.CharacterClass;
 
 import java.util.ArrayList;

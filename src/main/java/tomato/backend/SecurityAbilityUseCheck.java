@@ -7,7 +7,7 @@ import tomato.backend.data.Entity;
 import tomato.backend.data.TomatoData;
 import tomato.gui.security.SecurityGUI;
 import tomato.realmshark.enums.CharacterClass;
-import tomato.realmshark.items.Items;
+import tomato.backend.data.items.Items;
 import util.Util;
 
 public class SecurityAbilityUseCheck {

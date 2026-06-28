@@ -1,6 +1,5 @@
 package tomato.gui.myinfo;
 
-import assets.IdToAsset;
 import assets.ImageBuffer;
 import java.awt.*;
 import javax.swing.*;
@@ -10,9 +9,9 @@ import tomato.backend.data.Entity;
 import tomato.backend.data.TomatoData;
 import tomato.gui.TomatoGUI;
 import tomato.realmshark.ParseEnchants;
-import tomato.realmshark.items.Bullet;
-import tomato.realmshark.items.Item;
-import tomato.realmshark.items.Items;
+import tomato.backend.data.items.Bullet;
+import tomato.backend.data.items.Item;
+import tomato.backend.data.items.Items;
 
 public class MyInfoGUI extends JPanel {
 

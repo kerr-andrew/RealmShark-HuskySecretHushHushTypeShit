@@ -1,8 +1,8 @@
 package tomato.gui.security;
 
 import com.google.gson.Gson;
-import tomato.realmshark.items.Item;
-import tomato.realmshark.items.Items;
+import tomato.backend.data.items.Item;
+import tomato.backend.data.items.Items;
 
 import java.util.ArrayList;
 import java.util.TreeMap;

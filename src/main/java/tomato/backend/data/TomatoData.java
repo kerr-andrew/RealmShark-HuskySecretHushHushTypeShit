@@ -25,8 +25,8 @@ import tomato.realmshark.RealmCharacterStats;
 import tomato.realmshark.Sound;
 import tomato.realmshark.enums.CharacterClass;
 import tomato.realmshark.enums.LootBags;
-import tomato.realmshark.items.Item;
-import tomato.realmshark.items.Items;
+import tomato.backend.data.items.Item;
+import tomato.backend.data.items.Items;
 import util.PropertiesManager;
 import util.RNG;
 
@@ -335,7 +335,7 @@ public class TomatoData {
                         dungeonStatData.updateItems(map.name, mob, bag);
                     }
 
-                    LootGUI.update(map, bag, mob, player, timePc);
+                    LootGUI.update(map, bag.asBag(), mob, player, timePc);
                 }
 
                 // Finish tick (decrement windows and reset if necessary)

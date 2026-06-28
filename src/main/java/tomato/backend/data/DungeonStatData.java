@@ -5,7 +5,7 @@ import com.google.gson.stream.JsonReader;
 import packets.data.StatData;
 import packets.data.enums.StatType;
 import tomato.gui.stats.DungeonStats;
-import tomato.realmshark.items.Items;
+import tomato.backend.data.items.Items;
 
 import java.io.File;
 import java.io.FileReader;

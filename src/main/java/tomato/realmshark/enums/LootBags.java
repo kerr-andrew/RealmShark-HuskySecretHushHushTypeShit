@@ -26,18 +26,18 @@ public enum LootBags {
     BOOSTED_ORANGE(1727, "B.Orange"),
     BOOSTED_RED(1728, "B.Red");
 
-    int id;
-    String name;
+    public final int id;
+    public final String name;
 
-    public static final TreeSet<Integer> lootDrop = new TreeSet<>();
-    public static final TreeMap<Integer, String> lootBagName = new TreeMap<>();
+    private static final TreeSet<Integer> lootDrop = new TreeSet<>();
+    private static final TreeMap<Integer, LootBags> lootBagMap = new TreeMap<>();
 
     static {
         for (LootBags o : LootBags.values()) {
             if (o.id >= 1287) {
                 lootDrop.add(o.id);
             }
-            lootBagName.put(o.id, o.name);
+            lootBagMap.put(o.id, o);
         }
     }
 
@@ -51,10 +51,9 @@ public enum LootBags {
     }
 
     public static String lootBagName(int id) {
-        return lootBagName.get(id);
+        LootBags bag = lootBagMap.get(id);
+        return bag == null ? null : bag.name;
     }
 
-    public int getId() {
-        return id;
-    }
+    public static LootBags lootBag(int id) { return lootBagMap.get(id); }
 }

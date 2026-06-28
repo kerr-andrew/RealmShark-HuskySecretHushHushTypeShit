@@ -1,6 +1,11 @@
-package tomato.realmshark.items;
+package tomato.backend.data.items;
 
+import assets.ImageBuffer;
+
+import javax.swing.*;
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class Item {
@@ -74,6 +79,54 @@ public class Item {
                 && !isST_UT;
 
         return (isNonConsumable && (isST_UT || isTieredGear));
+    }
+
+    public ImageIcon getIcon(int size) {
+        return ImageBuffer.getOutlinedIcon(id, size);
+    }
+
+    public WithEnchants withEnchants(String... enchants) {
+        return new WithEnchants(this, enchants);
+    }
+
+    public static class WithEnchants extends Item {
+        public final List<String> enchants;
+
+        private WithEnchants(Item item, String... enchants) {
+            super(
+                    item.id,
+                    item.name,
+                    item.displayName,
+                    item.slotType,
+                    item.tier,
+                    item.description,
+                    item.feedPower,
+                    item.projectiles,
+                    item.bullets,
+                    item.labels,
+                    item.imgFile,
+                    item.imgIndex,
+                    item.rof,
+                    item.numProj
+            );
+
+            this.enchants = Arrays.stream(enchants).collect(Collectors.toList());
+        }
+
+        public Color glow() {
+            switch (enchants.size()) {
+                case 1: return new Color(0, 255, 0);
+                case 2: return new Color(0, 200, 255);
+                case 3: return new Color(200, 0, 255);
+                case 4: return new Color(255, 215, 0);
+                default: return Color.BLACK;
+            }
+        }
+
+        public ImageIcon getGlowIcon(int size, int glowSize) {
+            if (enchants.isEmpty()) return getIcon(size);
+            return ImageBuffer.getOutlinedIconWithGlow(id, size, glow(), glowSize);
+        }
     }
 
     @SuppressWarnings({ "UnusedReturnValue", "unused" })

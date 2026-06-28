@@ -14,6 +14,7 @@ import packets.data.enums.StatType;
 import tomato.backend.data.Entity;
 import tomato.backend.data.Stat;
 import tomato.backend.data.TomatoData;
+import tomato.backend.data.items.Items;
 
 public class CharacterPetsGUI extends JPanel {
 

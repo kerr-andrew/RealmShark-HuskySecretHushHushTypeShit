@@ -15,7 +15,7 @@ import tomato.backend.data.DungeonStatData.DungeonInfo;
 import tomato.backend.data.DungeonStatData.Loot;
 import tomato.gui.SmartScroller;
 import tomato.gui.dps.DpsGUI;
-import tomato.realmshark.items.Items;
+import tomato.backend.data.items.Items;
 
 public class DungeonStats extends JPanel {
 

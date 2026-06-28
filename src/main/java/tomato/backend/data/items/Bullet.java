@@ -1,4 +1,4 @@
-package tomato.realmshark.items;
+package tomato.backend.data.items;
 
 public class Bullet {
     public int id;

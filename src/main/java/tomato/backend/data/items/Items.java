@@ -1,4 +1,4 @@
-package tomato.realmshark.items;
+package tomato.backend.data.items;
 
 import org.xml.sax.SAXException;
 import util.StringXML;
@@ -71,7 +71,8 @@ public class Items {
                     switch (texInfo.name) {
                         case "Index": {
                             String value = texInfo.children.get(0).value;
-                            item.setImgIndex(Integer.parseInt(texInfo.children.get(0).value, value.startsWith("0x") ? 16 : 10));
+                            if (value.startsWith("0x")) item.setImgIndex(Integer.parseInt(value.substring(2), 16));
+                            else item.setImgIndex(Integer.parseInt(value));
                             break;
                         }
                         case "File": item.setImgFile(texInfo.children.get(0).value); break;
@@ -130,6 +131,7 @@ public class Items {
     }
 
     public static String name(int id) {
-        return EQUIPMENT.get(id).name();
+        Item item = EQUIPMENT.get(id);
+        return item != null ? item.name() : null;
     }
 }
