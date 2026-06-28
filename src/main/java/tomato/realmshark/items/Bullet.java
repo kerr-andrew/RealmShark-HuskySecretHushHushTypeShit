@@ -1,12 +1,12 @@
-package tomato.gui.myinfo;
+package tomato.realmshark.items;
 
 public class Bullet {
-    int id;
-    float rof = -1;
-    int numProj;
+    public int id;
+    public float rof = -1;
+    public int numProj;
 
-    int min;
-    int max;
+    public int min;
+    public int max;
 
     @Override
     public String toString() {

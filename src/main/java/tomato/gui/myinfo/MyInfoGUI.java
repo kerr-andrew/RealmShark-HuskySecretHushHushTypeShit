@@ -10,6 +10,9 @@ import tomato.backend.data.Entity;
 import tomato.backend.data.TomatoData;
 import tomato.gui.TomatoGUI;
 import tomato.realmshark.ParseEnchants;
+import tomato.realmshark.items.Bullet;
+import tomato.realmshark.items.Item;
+import tomato.realmshark.items.Items;
 
 public class MyInfoGUI extends JPanel {
 
@@ -416,7 +419,7 @@ public class MyInfoGUI extends JPanel {
             displayImg(icons[4], pet.stat.get(StatType.SKIN_ID).statValue);
         }
 
-        Weapon w = Equip.get(slots[0]);
+        Item w = Items.get(slots[0]);
         if (w == null) return;
         float exaltDmg = exalt / 1000f;
 
@@ -599,7 +602,7 @@ public class MyInfoGUI extends JPanel {
             )
         );
 
-        Weapon ability = Equip.get(slots[1]);
+        Item ability = Items.get(slots[1]);
 
         if (ability != null) {
             sb

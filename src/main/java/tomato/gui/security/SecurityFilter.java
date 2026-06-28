@@ -1,7 +1,8 @@
 package tomato.gui.security;
 
 import com.google.gson.Gson;
-import tomato.realmshark.ParseEquipment;
+import tomato.realmshark.items.Item;
+import tomato.realmshark.items.Items;
 
 import java.util.ArrayList;
 import java.util.TreeMap;
@@ -60,7 +61,7 @@ public class SecurityFilter {
         // equipment minimum reqs
         for (int slot : minTier.keySet()) {
             int equipmentId = player.inv[slot];
-            ParseEquipment.Equipment equipment = ParseEquipment.getEquipmentById(equipmentId);
+            Item equipment = Items.get(equipmentId);
             Integer minimumTier = this.minTier.get(slot);
             boolean isSTUT = equipment.labels.contains("ST") || equipment.labels.contains("UT");
 
@@ -90,7 +91,7 @@ public class SecurityFilter {
             // skip empty item slots
             if (item == -1) continue;
             // skip non-parsable items
-            if (!ParseEquipment.isParseItem(ParseEquipment.getEquipmentById(item))) continue;
+            if (!Items.has(item) || !Items.get(item).isParseItem()) continue;
             Integer ip = this.itemPoint.get(item);
             if ((ip == null && isWhitelistFilter) || (ip != null && !isWhitelistFilter)) {
                 missing.add("Blacklisted item: " + Player.equipmentNames[i]);

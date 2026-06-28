@@ -2,7 +2,8 @@ package tomato.gui.security;
 
 import assets.ImageBuffer;
 import com.google.gson.Gson;
-import tomato.realmshark.ParseEquipment;
+import tomato.realmshark.items.Item;
+import tomato.realmshark.items.Items;
 import tomato.realmshark.enums.CharacterClass;
 import tomato.realmshark.enums.StatPotion;
 import util.PropertiesManager;
@@ -18,6 +19,7 @@ import java.awt.event.*;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.stream.IntStream;
 
 public class SecurityFilterGUI extends JPanel {
@@ -554,10 +556,10 @@ public class SecurityFilterGUI extends JPanel {
         // should only be run once
         if (!items.isEmpty()) System.err.println("Tried to generate item filter entities more than once?");
 
-        ArrayList<ParseEquipment.Equipment> list = ParseEquipment.getParseItems();
-        list.sort(Comparator.comparing(ParseEquipment.Equipment::name));
+        List<Item> list = Items.getParseItems();
+        list.sort(Comparator.comparing(Item::name));
 
-        for (ParseEquipment.Equipment e : list) {
+        for (Item e : list) {
             // omit some items
             if (OMITTED_SLOT_TYPES.contains(e.slotType)) continue;
 
@@ -580,14 +582,14 @@ public class SecurityFilterGUI extends JPanel {
         // Clear current item list
         itemsPanel.removeAll();
 
-        ArrayList<ParseEquipment.Equipment> list = ParseEquipment.getParseItems();
-        list.sort(Comparator.comparing(ParseEquipment.Equipment::name));
+        List<Item> list = Items.getParseItems();
+        list.sort(Comparator.comparing(Item::name));
 
 
         int count = 0;
         for (FilterEntity itemFilterEntity : items) {
             GridBagConstraints c = new GridBagConstraints();
-            ParseEquipment.Equipment e = ParseEquipment.getEquipmentById(itemFilterEntity.id);
+            Item e = Items.get(itemFilterEntity.id);
 
             // omit some items
             if (OMITTED_SLOT_TYPES.contains(e.slotType)) continue;
@@ -595,12 +597,11 @@ public class SecurityFilterGUI extends JPanel {
             // TODO: omit gear covered by minimum equipment tiers
 
             // basic search
-            String entitySearchName = e.name().toLowerCase();
-            String[] entitySearchLabels = e.labels.toLowerCase().split(",");
-            String searchName = withSearch != null ? withSearch.toLowerCase() : "";
+            String entitySearchName = e.name().toUpperCase();
+            String searchName = withSearch != null ? withSearch.toUpperCase() : "";
 
             boolean searchByName = entitySearchName.contains(searchName);
-            boolean searchByLabel = Arrays.asList(entitySearchLabels).contains(searchName);
+            boolean searchByLabel = e.labels.contains(searchName);
             if (withSearch != null && !searchByName && !searchByLabel) continue;
 
             c.gridy = count;

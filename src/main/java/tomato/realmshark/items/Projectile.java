@@ -1,9 +1,9 @@
-package tomato.gui.myinfo;
+package tomato.realmshark.items;
 
 public class Projectile {
-    int id = 0;
-    int min;
-    int max;
+    public int id = 0;
+    public int min;
+    public int max;
 
     @Override
     public String toString() {
