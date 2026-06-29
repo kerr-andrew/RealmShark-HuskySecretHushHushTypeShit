@@ -1,6 +1,8 @@
 package tomato.backend.data;
 
 import java.io.Serializable;
+
+import assets.IdToAsset;
 import tomato.backend.data.items.Item;
 import tomato.backend.data.items.Items;
 import util.RNG;
@@ -33,10 +35,9 @@ public class Projectile implements Serializable {
         this.summonerId = summonerId;
         this.containerType = id; // Store containerType for proc projectile scaling
 
-        Item item = Items.get(id);
-        if (item != null && item.projectiles.containsKey(type)) {
-            armorPiercing = item.projectiles.get(type).piercing;
-        }
+        try {
+            armorPiercing = IdToAsset.getIdProjectileArmorPierces(id, type);
+        } catch (Exception e) {}
     }
 
     /**

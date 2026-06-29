@@ -212,7 +212,7 @@ public class CharacterPetsGUI extends JPanel {
 
         public String name() {
             if (stat.get(StatType.PET_NAME_STAT) == null) return "---";
-            return Items.name(skin());
+            return IdToAsset.objectName(skin());
         }
 
         public int skin() {

@@ -3,6 +3,8 @@ package tomato.backend.data;
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import assets.IdToAsset;
 import packets.data.ObjectStatusData;
 import packets.data.StatData;
 import packets.data.WorldPosData;
@@ -89,7 +91,7 @@ public class Entity implements Serializable {
         this.objectType = type;
         try {
             if (type != -1) {
-                name = Items.name(type);
+                name = IdToAsset.objectName(type);
             }
         } catch (Exception e) {}
     }
@@ -761,11 +763,14 @@ public class Entity implements Serializable {
     }
 
     public boolean isBossMob() {
-        Item item = Items.get(objectType);
-        return item != null && (
-                item.labels.contains("BOSS") ||
-                item.labels.contains("MINIBOSS")
-        );
+        String label = IdToAsset.getIdLabel(objectType);
+        if (label != null) {
+            String[] split = label.split(",");
+            for (String s : split) {
+                if (s.equals("BOSS") || s.equals("MINIBOSS")) return true;
+            }
+        }
+        return false;
     }
 
     public Bag asBag() {

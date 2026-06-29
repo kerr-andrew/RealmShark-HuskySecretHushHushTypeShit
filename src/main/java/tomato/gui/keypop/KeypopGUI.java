@@ -82,7 +82,7 @@ public class KeypopGUI extends JPanel {
 
             if (m.find()) {
                 String playerName = m.group(1).split(",")[0];
-                String dungeonName = Items.name(packet.pictureType);
+                String dungeonName = IdToAsset.objectName(packet.pictureType);
 
                 appendTextAreaKeypop(String.format("%s [%s]: %s\n", Util.getHourTime(), playerName, dungeonName));
 

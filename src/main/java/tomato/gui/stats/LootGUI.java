@@ -1,5 +1,6 @@
 package tomato.gui.stats;
 
+import assets.IdToAsset;
 import assets.ImageBuffer;
 import java.awt.*;
 import java.time.LocalDateTime;
@@ -364,7 +365,7 @@ public class LootGUI extends JPanel {
             if (sd != null) {
                 picon = sd.statValue;
                 if (picon == 0) picon = player.objectType;
-                name = Items.name(picon);
+                name = IdToAsset.objectName(picon);
             }
             if (sesn != null) {
                 if (sesn.statValue == 1) {
@@ -458,7 +459,7 @@ public class LootGUI extends JPanel {
         JLabel icon = new JLabel(ImageBuffer.getOutlinedIcon(mob, 20));
         String name = "Unknown";
         if (mob != 100) {
-            name = Items.name(mob);
+            name = IdToAsset.objectName(mob);
         }
         if (sharedLoot != 0) {
             name += "<br>Shared loot: " + sharedLoot + " players";

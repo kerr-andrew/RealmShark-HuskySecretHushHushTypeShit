@@ -769,10 +769,9 @@ public class TomatoData {
         Entity e = entityList.get(p.ownerId);
         boolean ap = false;
         if (e != null) {
-            Item item = Items.get(e.objectType);
-            if (item != null && item.projectiles.containsKey(p.bulletType)) {
-                ap = item.projectiles.get(p.bulletType).piercing;
-            }
+            try {
+                ap = IdToAsset.getIdProjectileArmorPierces(e.objectType, p.bulletType);
+            } catch (Exception ignored) {}
         }
         for (int i = 0; i < p.numShots; i++) {
             long id = p.ownerId + ((long) (p.bulletId + i) << 24);

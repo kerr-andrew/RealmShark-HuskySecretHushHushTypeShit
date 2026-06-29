@@ -1,5 +1,6 @@
 package tomato.backend;
 
+import assets.IdToAsset;
 import packets.Packet;
 import packets.data.StatData;
 import packets.data.WorldPosData;
@@ -149,7 +150,7 @@ public class Parse {
 
         @Override
         public String toString() {
-            return Items.name(objectType);
+            return IdToAsset.objectName(objectType);
         }
     }
 }
